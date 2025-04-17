@@ -39,7 +39,7 @@ using std::runtime_error;
 namespace sample {
 	namespace auth {
 
-		// Simple, hard coded token example
+		//Simple, hard coded token example
 		string AcquireToken()
 		{
 			string mToken = "your token here";
@@ -50,6 +50,7 @@ namespace sample {
 		// The Python script requires username, password, clientId, resource, and authority. 
 		// Username, Password, and ClientId are provided by the user/developer		
 		// Resource and Authority are provided as part of the OAuth2Challenge object that is passed in by the SDK to the AuthDelegate.
+		// Certain advanced configuration settings, such as Conditional Access -> Terms of Use may cause this Python script to fail.
 		string AcquireToken(
 			const string& username,
 			const string& password,

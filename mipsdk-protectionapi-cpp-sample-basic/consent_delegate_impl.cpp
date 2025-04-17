@@ -47,8 +47,7 @@ Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
   std::cout << "3) Reject" << std::endl;
   std::cout << "Select an option: ";
   char input;
-  // std::cin >> input;
-  input = 1;
+  std::cin >> input;
 
   switch (input)
   {
@@ -62,7 +61,7 @@ Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
 	  return Consent::Reject;
 	  break;
   default:
-	  return Consent::Accept;
+	  return Consent::Reject;
   }  
 }
 

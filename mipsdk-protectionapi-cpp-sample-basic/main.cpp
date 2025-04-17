@@ -44,79 +44,58 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-using sample::protection::Action;
+using sample::file::Action;
 
 int main()
 {
-	// local variables to store target file and the label that will be applied to the file.
-	
-	string templateToApply;
-	string plaintext;
-	string ciphertext;
-	string decryptedText;
-	
-	// Client ID should be the client ID registered in Azure AD for your custom application.
-	std::string clientId = "YOUR CLIENT ID";
-
-	// Username and password are required in this sample as the oauth2 token is obtained via Python script and MSAL auth.
-	// DO NOT embed credentials for administrative or production accounts. 
-	std::string userName = "YOUR TEST USER ID";
-	std::string password = "YOUR TEST USER PASSWORD";
+	// Local variables to store target file and the label that will be applied to the file.
+	string filePath;
+	string labelToApply;		
 
 	// Create the mip::ApplicationInfo object. 
-
+	// Client ID should be the client ID registered in Azure AD for your custom application.
 	// Friendly Name should be the name of the application as it should appear in reports.
-	mip::ApplicationInfo appInfo{ clientId,  "MIP SDK Protection Sample for C++", "1.11.0" };
-
-	// All actions for this tutorial project are implemented in samples::policy::Action
-	// Source files are Action.h/cpp.	
+	mip::ApplicationInfo appInfo{ "d8d0dc0b-8525-40d3-af97-5d3186367142", "MIP SDK File Sample Quick Start for C++", "1.13.00" };
+	
+	// All actions for this tutorial project are implemented in samples::file::Action
+	// Source files are Action.h/cpp.
+	// "File" was chosen because this example is specifically for the MIP SDK File API. 
 	// Action's constructor takes in the mip::ApplicationInfo object and uses the client ID for auth.
-	// Username and password are required in this sample as the oauth2 token is obtained via Python script and basic auth.
-	Action action = Action(appInfo, userName, password);
+	// Username and password are required in this sample as the oauth2 token is obtained via Python script and MSAL auth.
+	// Final param enables or disable audit event generation.
+	
+	//Action action = Action(appInfo, "YOUR TEST USERNAME", "YOUR TEST PASSWORD", true);
+	Action action = Action(appInfo, "admin.one@evaas001.onmicrosoft.com", "d8d0dc0b-8525-40d3-af97-5d3186367142", "33d51651-edce-4348-a4e8-580cf489695a", "http://localhost:8080", true);
+	// Call action.ListLabels() to display all available labels, then pause.
+	action.ListLabels();	
+	system("pause");
+	
+	// Prompt the user to copy the Label ID from a displayed label. This will be stored then applied later to a file.
+	cout << "Copy a label ID from above to apply to a new file." << endl;
+	cout << "Label ID: ";
+	cin >> labelToApply;
+	
+	// Prompt the user to enter a file. A labeled copy of this file will be created.
+	cout << "Enter a file path for the input file: ";
+	cin >> filePath;
+	
+	// Show action plan
+	cout << "Applying Label ID " + labelToApply + " to " + filePath << endl;
+	
+	// Use GetOutputFileNameModified from utils to generate the output file name.
+	string outputFileName = sample::utils::GetOutputFileNameModified(filePath, "_modified");
 
-	while (true)
-	{
-		templateToApply = "";
+	// Call Action.SetLabel, providing the file to label, generated output name, the label ID, and a justification. 
+	// Justification is required only when downgrading the label. Justification examples will be shown in later samples.
+	action.SetLabel(filePath, outputFileName, labelToApply);
+	
+	system("pause");
+	cout << endl << endl;
 
-		// Call action.ListLabels() to display all available labels, then pause.
-		cout << "*** Template List: " << endl;
-		action.ListTemplates();		
-
-		// Prompt the user to copy the Label ID from a displayed label. This will be stored
-		// then applied later to a file.		
-		cout << "Copy a template ID from above to apply to a new string or q to quit." << endl;
-		cout << endl << "Template ID: ";
-		cin >> templateToApply;
-
-		if (templateToApply == "q")
-		{
-			return 0;
-		}
-
-		// Generate a new protection descriptor and store publishing license
-		
-
-		// Prompt the user to enter a file. A labeled copy of this file will be created.
-		cout << "Enter some text to encrypt: ";
-		std::getline(std::cin >> std::ws, plaintext);
-				
-		// Show action plan
-		cout << "Applying Label ID " + templateToApply + " to: " << endl << plaintext << endl;
-
-		// Protect the input string using the previously generated PL.
-		auto publishingLicense = action.ProtectString(plaintext, ciphertext, templateToApply);
-
-		cout << "Protected output: " << endl << ciphertext << endl;
-		cout << endl << "Decrypting string: " << endl << endl;
-
-		// Use the same PL to decrypt the ciphertext.
-		action.DecryptString(decryptedText, ciphertext, publishingLicense);
-
-		// Output decrypted content. Should match original input text.
-		cout << decryptedText << endl;
-
-		system("pause");
-	}
+	// Read the label from the labeled file. 
+	action.ReadLabel(outputFileName);			
+	
+	system("pause");
 		
 	return 0;
 }
