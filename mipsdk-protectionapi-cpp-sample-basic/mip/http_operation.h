@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,53 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Contains HttpOperation interface used by HttpDelegate
+ * 
+ * @file http_response.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_HTTP_OPERATION_H_
+#define API_MIP_HTTP_OPERATION_H_
 
-#include <iostream>
+#include "mip/http_response.h"
+#include "mip/mip_namespace.h"
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+MIP_NAMESPACE_BEGIN
 
-namespace sample {
-namespace consent {
+/**
+ * @brief Interface that describes a single HTTP operation, implemented by client app when overriding HttpDelegate
+ */
+class HttpOperation {
+public:
+  /**
+   * @brief Gets operation ID
+   * 
+   * @return Operation ID
+   * 
+   * @note The corresponding HttpRequest and HttpResponse will have the same ID
+   */
+  virtual const std::string& GetId() const = 0;
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+  /**
+   * @brief Get response, if any
+   *
+   * @return Response
+   */
+  virtual std::shared_ptr<HttpResponse> GetResponse() = 0;
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /**
+   * @brief Get cancellation status of operation
+   *
+   * @return Cancellation status
+   */
+  virtual bool IsCancelled() = 0;
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /** @cond DOXYGEN_HIDE */
+  virtual ~HttpOperation() {}
+   /** @endcond */
+};
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+MIP_NAMESPACE_END
+#endif  // API_MIP_HTTP_OPERATION_H_
 
-} // namespace consent
-} // namespace sample

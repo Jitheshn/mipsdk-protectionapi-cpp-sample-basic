@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,52 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file containing the AuditDelegate class to be used to override MIP audit
+ * 
+ * @file audit_delegate.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_AUDIT_DELEGATE_H_
+#define API_MIP_AUDIT_DELEGATE_H_
 
-#include <iostream>
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include "mip/audit_event.h"
+#include "mip/diagnostic_delegate.h"
+#include "mip/mip_namespace.h"
 
-namespace sample {
-namespace consent {
+MIP_NAMESPACE_BEGIN
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+/**
+ * @brief Audit Settings in policy.
+ */
+enum class EnableAuditSetting : unsigned int {
+  Undefined    = 0, /* Audit has not been enabled or disabled */
+  Enabled      = 1, /* Audit has been enabled */
+  Disabled     = 2, /* Audit has been disabled */
+};
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+/**
+ * @brief A class that defines the interface to the MIP SDK audit notifications.
+ */
+class AuditDelegate : public DiagnosticDelegate<AuditEvent>{
+public:
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /** @cond DOXYGEN_HIDE */
+  
+   /**
+   * @brief Sets the audit settings from the policy.
+   * 
+   * @param auditSetting audit setting present in the policy.
+   */
+  virtual void SetEnableAuditSetting(const EnableAuditSetting /*auditSetting*/) {}
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+  virtual ~AuditDelegate() {}
+protected:
+  AuditDelegate() {}
+   /** @endcond */
+};
 
-} // namespace consent
-} // namespace sample
+MIP_NAMESPACE_END
+
+#endif // API_MIP_AUDIT_DELEGATE_H_

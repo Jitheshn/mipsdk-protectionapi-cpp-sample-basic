@@ -37,12 +37,12 @@
 namespace sample {
 	namespace auth {
 
-		
+
 
 		class AuthDelegateImpl final : public mip::AuthDelegate {
 		public:
 			AuthDelegateImpl() = delete;
-			
+
 			AuthDelegateImpl(
 				const mip::ApplicationInfo& applicationInfo);
 
@@ -56,14 +56,14 @@ namespace sample {
 				const mip::ApplicationInfo& applicationInfo,
 				const std::string& username,
 				const std::string& password);
-						
+
 			bool AcquireOAuth2Token(const mip::Identity& identity, const OAuth2Challenge& challenge, OAuth2Token& token) override;
 			std::string  WStringToString(const std::wstring& wstr);
 
 		private:
 			std::string mUserName;
 			std::string mPassword;
-			std::string mClientId;	
+			std::string mClientId;
 			mip::ApplicationInfo mApplicationInfo;
 			AuthClient* mptrAuthClient = NULL;
 

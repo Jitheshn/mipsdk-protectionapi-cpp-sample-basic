@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,47 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file containing the EventContext class which describes a single audit/telemetry event context
+ * 
+ * @file event_context.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_EVENT_CONTEXT_H_
+#define API_MIP_EVENT_CONTEXT_H_
 
-#include <iostream>
+#include "mip/common_types.h"
+#include "mip/diagnostic_types.h"
+#include "mip/mip_namespace.h"
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+MIP_NAMESPACE_BEGIN
 
-namespace sample {
-namespace consent {
+/**
+ * @brief A single audit/telemetry event context
+ */
+class EventContext {
+public:
+  /**
+  * @brief Gets the cloud type
+  * 
+  * @return cloud
+  */
+  virtual Cloud GetCloud() const = 0;
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+  /**
+  * @brief Gets the data boundary region
+  * 
+  * @return DataBoundary
+  */
+  virtual DataBoundary GetDataBoundary() const = 0;
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /** @cond DOXYGEN_HIDE */
+  virtual ~EventContext() {}
+protected:
+  EventContext() {}
+   /** @endcond */
+};
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+MIP_NAMESPACE_END
+#endif // API_MIP_EVENT_CONTEXT_H_
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
-
-} // namespace consent
-} // namespace sample

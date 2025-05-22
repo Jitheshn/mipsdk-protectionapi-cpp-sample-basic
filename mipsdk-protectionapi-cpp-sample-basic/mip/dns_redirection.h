@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,31 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file Containing types used to control dns redirection
+ * 
+ * @file dns_redirection.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_DNS_REDIRECTION_H_
+#define API_MIP_DNS_REDIRECTION_H_
 
-#include <iostream>
+#include "mip/mip_namespace.h"
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+MIP_NAMESPACE_BEGIN
 
-namespace sample {
-namespace consent {
+/**
+ * @brief Storage type for the caches
+ */
+enum class DnsRedirection : unsigned int {
+  Disabled = 0, /**< Dns redirect is disabled */
+  MDEDiscovery = 1 << 0, /**< MDE DNS.  Uses DNS query _rmsdisco._http._tcp.  This mode is the default */
+};
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
-
-  std::cout << "SDK will connect to: " << url << std::endl;
-
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
-
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
+inline DnsRedirection operator|(DnsRedirection lhs, DnsRedirection rhs) {
+  return static_cast<DnsRedirection>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
 }
 
-} // namespace consent
-} // namespace sample
+MIP_NAMESPACE_END
+
+#endif  // API_MIP_DNS_REDIRECTION_H_

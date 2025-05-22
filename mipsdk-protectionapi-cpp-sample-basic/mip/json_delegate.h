@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,50 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Contains the JsonDelegate interface used to parse and produce JSON
+ * data
+ *
+ * @file json_delegate.h
+ */
 
-#include "consent_delegate_impl.h"
 
-#include <iostream>
+#ifndef API_MIP_JSON_DELEGATE_H_
+#define API_MIP_JSON_DELEGATE_H_
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include <memory>
 
-namespace sample {
-namespace consent {
+#include "mip/delegate_response.h"
+#include "mip/json_document.h"
+#include "mip/mip_namespace.h"
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+MIP_NAMESPACE_BEGIN
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+typedef mip::DelegateResponse<mip::JsonDocument> JsonResult;
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+class JsonDelegate {
+public:
+  /**
+   * @brief Creates a blank json document with an Object as the root.
+   * 
+   * @return A delegate response which either contains a pointer to a blank json document with an Object as the root,
+   * or an exception.
+   */
+  virtual mip::JsonResult CreateJsonObjectDocument() const = 0;
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+  /**
+   * @brief parse value as json document.
+   *
+   * @return A delegate response which either contains a pointer to a json document of the parsed data,
+   * or an exception.
+   */
+  virtual mip::JsonResult Parse(const std::string& value) const = 0;
 
-} // namespace consent
-} // namespace sample
+  /** @cond DOXYGEN_HIDE */
+  virtual ~JsonDelegate() {};
+  /** @endcond */
+};
+
+MIP_NAMESPACE_END
+
+#endif // API_MIP_JSON_DELEGATE_H_

@@ -26,33 +26,43 @@
 */
 
 
-#ifndef SAMPLES_BASICLABELING_ACTION_H_
-#define SAMPLES_BASICLABELING_ACTION_H_
+#ifndef SAMPLES_ACTION_H_
+#define SAMPLES_ACTION_H_
 
 #include <memory>
 #include <string>
 
 #include "mip/mip_context.h"
 #include "mip/common_types.h"
-#include "mip/file/file_profile.h"
-#include "mip/file/file_engine.h"
-#include "mip/file/file_handler.h"
-#include "mip/file/labeling_options.h"
+#include "mip/protection/protection_profile.h"
+#include "mip/protection/protection_engine.h"
+#include "mip/protection/protection_handler.h"
+#include "mip/protection_descriptor.h"
+#include "mip/protection/rights.h"
 
+#include "protection_observers.h"
 #include "auth_delegate_impl.h"
 #include "consent_delegate_impl.h"
-#include "file_profile_observer_impl.h"
-#include "file_handler_observer_impl.h"
 
 namespace sample {
-	namespace file {		
+	namespace protection {	
+
+		struct ProtectionOptions {
+			bool isAdHoc = false;
+			std::vector<std::string> owner;
+			std::vector<std::string> users;
+			std::vector<std::string> rights;
+			std::vector<std::string> roles;
+			std::string templateId;
+			bool useBufferApi = false;
+		};
+
 		class Action {
 		public:
-			
+
 			Action(const mip::ApplicationInfo appInfo,
 				const std::string& username,
-				const std::string& password,
-				const bool generateAuditEvents);	
+				const std::string& password);
 
 			Action(const mip::ApplicationInfo appInfo,
 				const std::string& username,
@@ -64,32 +74,31 @@ namespace sample {
 
 			~Action();
 
-			void ListLabels();							// List all labels associated engine loaded for user			
-			void SetLabel(const std::string& filepath,	// Set label with labelId on input file, writing to outputfile.
-				const std::string& outputfile, 
-				const std::string& labelId);
-			void ReadLabel(const std::string& filepath);// Read the label from specified file. Consent flow will trigger if file is protected.
-			bool CommitChanges(							// Commit changes to file referred to by fileHandler, writing to outputFile
-				const std::shared_ptr<mip::FileHandler>& fileHandler, 
-				const std::string& outputFile);
+			void ListTemplates();							// List all labels associated engine loaded for user						
+			std::vector<uint8_t> ProtectString(const std::string& plaintext, std::string& ciphertext, const std::string& templateId);
+			void DecryptString(std::string& plaintext, const std::string& ciphertext, const std::vector<uint8_t>& serializedLicense);
+			void ShowProtection(const std::vector<uint8_t>& serializedLicense);
 
 		private:
-			void AddNewFileProfile();					// Private function for adding and loading mip::FileProfile
-			void AddNewFileEngine();					// Private function for adding/loading mip::FileEngine for specified user
-			std::shared_ptr<mip::FileHandler> CreateFileHandler(const std::string& filepath); //Creates mip::FileHandler for specified file
+			void AddNewProtectionProfile();					// Private function for adding and loading mip::FileProfile
+			void AddNewProtectionEngine();					// Private function for adding/loading mip::FileEngine for specified user
+			std::shared_ptr<mip::ProtectionHandler> CreateProtectionHandlerForPublishing(const std::shared_ptr<mip::ProtectionDescriptor>& descriptor); // Creates mip::FileHandler for specified file
+			shared_ptr<mip::ProtectionHandler> CreateProtectionHandlerForConsumption(const vector<uint8_t>& serializedPublishingLicense);
+			std::shared_ptr<mip::ProtectionDescriptor> CreateProtectionDescriptor(const ProtectionOptions protectionOptions);
 
 			std::shared_ptr<sample::auth::AuthDelegateImpl> mAuthDelegate;			// AuthDelegateImpl object that will be used throughout the sample to store auth details.
-			std::shared_ptr<mip::MipContext> mMipContext;							// mip::MipContext
-			std::shared_ptr<mip::FileProfile> mProfile;								// mip::FileProfile object to store/load state information 
-			std::shared_ptr<mip::FileEngine> mEngine;								// mip::FileEngine object to handle user-specific actions. 
+			std::shared_ptr<mip::MipContext> mMipContext;
+			std::shared_ptr<mip::ProtectionProfile> mProfile;								// mip::FileProfile object to store/load state information 
+			std::shared_ptr<mip::ProtectionEngine> mEngine;								// mip::FileEngine object to handle user-specific actions. 
 			std::shared_ptr<sample::consent::ConsentDelegateImpl> mConsentDelegate; // Implements consent flow. Review consent_delegate_impl.cpp for implementation details.						
 			mip::ApplicationInfo mAppInfo;											// mip::ApplicationInfo object for storing client_id and friendlyname
-			bool mGenerateAuditEvents;												// Set if application should submit audit events to AIP Analytics
+			bool mGenerateAuditEvents;
 
-
-			std::string mUsername; //store username to pass to auth delegate and to generate Identity
-			std::string mPassword; //store password to pass to auth delegate
+			std::string mUsername; // store username to pass to auth delegate and to generate Identity
+			std::string mPassword; // store password to pass to auth delegate
 		};
+
+		
 
 	}
 }

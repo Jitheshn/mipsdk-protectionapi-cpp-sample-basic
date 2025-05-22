@@ -42,11 +42,11 @@ namespace sample {
 		AuthDelegateImpl::AuthDelegateImpl(
 			const mip::ApplicationInfo& applicationInfo)
 			: mApplicationInfo(applicationInfo) {
-			}
+		}
 
 		AuthDelegateImpl::AuthDelegateImpl(const mip::ApplicationInfo& applicationInfo, const std::string& username, const std::string& clientId, const std::string& tenantId, const std::string& redirectUri/*, const std::string& scope*/) : mApplicationInfo(applicationInfo), mUserName(username)
 		{
-			
+
 			mptrAuthClient = new AuthClient(clientId, tenantId, redirectUri);
 
 		}
@@ -56,8 +56,8 @@ namespace sample {
 			const std::string& username,
 			const std::string& password)
 			: mApplicationInfo(applicationInfo),
-			  mUserName(username),
-			  mPassword(password) {
+			mUserName(username),
+			mPassword(password) {
 		}
 
 		std::string  AuthDelegateImpl::WStringToString(const std::wstring& wstr) {
@@ -69,12 +69,12 @@ namespace sample {
 			result.pop_back(); // remove null terminator
 			return result;
 		}
-			
+
 		bool AuthDelegateImpl::AcquireOAuth2Token(
 			const mip::Identity& /*identity*/,
 			const OAuth2Challenge& challenge,
 			OAuth2Token& token) {
-			
+
 			string accessToken;
 			string resource = challenge.GetResource();
 
@@ -89,7 +89,7 @@ namespace sample {
 
 			//string authority = challenge.GetAuthority();
 
-			
+
 
 			if (mptrAuthClient)
 			{
@@ -101,9 +101,9 @@ namespace sample {
 			{
 				accessToken = sample::auth::AcquireToken(mUserName, mPassword, mApplicationInfo.applicationId, challenge.GetResource(), challenge.GetAuthority());
 			}
-			
+
 			//call our AcquireToken function, passing in username, password, clientId, and getting the resource/authority from the OAuth2Challenge object
-			
+
 			token.SetAccessToken(accessToken);
 
 			return true;

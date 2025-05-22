@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -22,49 +22,52 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
+/**
+ * @brief A file containing the JsonDocument interface.
+ *
+ * @file json_document.h
+ */
+#ifndef API_MIP_JSON_DOCUMENT_H_
+#define API_MIP_JSON_DOCUMENT_H_
 
-#include "consent_delegate_impl.h"
+#include <memory>
+#include <string>
+#include <vector>
 
-#include <iostream>
+#include "mip/json_value.h"
+#include "mip/mip_namespace.h"
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+MIP_NAMESPACE_BEGIN
+/**
+ * @brief JsonDocument abstraction class.
+ * 
+ */
+class JsonDocument {
+public:
+  /**
+   * @brief Gets a pointer to the root node of the document.
+   * @return A pointer to the root node of the document.
+   */
+  virtual std::shared_ptr<JsonValue> Root() const = 0;
+  /**
+   * @brief Create an Object value to later be added as a child of this document.
+   * @return An Object value to later be added as a child of this document.
+   */
+  virtual std::shared_ptr<JsonValue> CreateObjectValue() = 0;
+  /**
+   * @brief Create an Array value to later be added as a child of this document.
+   * @return An Array value to later be added as a child of this document.
+   */
+  virtual std::shared_ptr<JsonValue> CreateArrayValue() = 0;
+  /** @cond DOXYGEN_HIDE */
+  virtual ~JsonDocument() {}
 
-namespace sample {
-namespace consent {
+protected:
+  JsonDocument() {}
+  /** @endcond */
+};
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+MIP_NAMESPACE_END
 
-  std::cout << "SDK will connect to: " << url << std::endl;
-
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
-
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
-
-} // namespace consent
-} // namespace sample
+#endif // API_MIP_JSON_DOCUMENT_H_

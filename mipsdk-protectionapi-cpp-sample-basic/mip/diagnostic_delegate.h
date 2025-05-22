@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,59 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file containing the DiagnosticDelegate class to be used to override MIP audit/telemetry
+ * 
+ * @file diagnostic_delegate.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_DIAGNOSTIC_DELEGATE_H_
+#define API_MIP_DIAGNOSTIC_DELEGATE_H_
 
-#include <iostream>
+#include <memory>
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include "mip/event_context.h"
+#include "mip/mip_namespace.h"
 
-namespace sample {
-namespace consent {
+MIP_NAMESPACE_BEGIN
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+/**
+ * @brief A class that defines the interface to the MIP SDK audit/telemetry notifications.
+ */
+template <class T>
+class DiagnosticDelegate {
+public:
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /**
+   * @brief Log a diagnostic event
+   * 
+   * @param event Event to be logged
+   */
+  virtual void WriteEvent(
+    const std::shared_ptr<T>& event) = 0;
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /**
+   * @brief Log a diagnostic event
+   * 
+   * @param event Event to be logged
+   * @param eventContext EventContext associated with event
+   */
+  virtual void WriteEvent(
+    const std::shared_ptr<T>& event, 
+    const mip::EventContext& eventContext) = 0;
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+  /**
+   * @brief Flush any queued events (e.g. due to shutdown)
+   */
+  virtual void Flush() = 0;
 
-} // namespace consent
-} // namespace sample
+  /** @cond DOXYGEN_HIDE */
+  virtual ~DiagnosticDelegate() {}
+protected:
+  DiagnosticDelegate() {}
+   /** @endcond */
+};
+
+MIP_NAMESPACE_END
+
+#endif // API_MIP_DIAGNOSTIC_DELEGATE_H_

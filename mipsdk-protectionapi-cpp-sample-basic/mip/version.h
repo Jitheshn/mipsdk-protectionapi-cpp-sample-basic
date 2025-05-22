@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,27 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file that contains version macros.
+ * 
+ * @file version.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_VERSION_H_
+#define API_MIP_VERSION_H_
 
-#include <iostream>
+#include "version.inc"
+/** @cond DOXYGEN_HIDE */
+#define VERSION_STRINGIZE2(s) #s
+#define VERSION_STRINGIZE(s) VERSION_STRINGIZE2(s)
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+// Each of these are limited to 65535 (16 bits)
+#define VERSION_MAJOR VER_MAJOR
+#define VERSION_MINOR VER_MINOR
+#define VERSION_PATCH VER_PATCH
 
-namespace sample {
-namespace consent {
+#define VER_FILE_VERSION VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VER_SUFFIX_NUM
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
-
-  std::cout << "SDK will connect to: " << url << std::endl;
-
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
-
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
-
-} // namespace consent
-} // namespace sample
+#define VER_FILE_VERSION_STR VERSION_STRINGIZE(VER_STR)
+/** @endcond */
+#endif // API_MIP_VERSION_H_

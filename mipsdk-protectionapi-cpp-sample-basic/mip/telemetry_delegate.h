@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,34 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file containing the TelemetryDelegate class to be used to override MIP telemetry
+ *
+ * @file telemetry_delegate.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_TELEMETRY_DELEGATE_H_
+#define API_MIP_TELEMETRY_DELEGATE_H_
 
-#include <iostream>
+#include "mip/diagnostic_delegate.h"
+#include "mip/mip_namespace.h"
+#include "mip/telemetry_event.h"
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+MIP_NAMESPACE_BEGIN
 
-namespace sample {
-namespace consent {
+/**
+ * @brief A class that defines the interface to the MIP SDK telemetry notifications.
+ */
+class TelemetryDelegate : public DiagnosticDelegate<TelemetryEvent> {
+public:
+  /** @cond DOXYGEN_HIDE */
+  virtual ~TelemetryDelegate() {}
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+protected:
+  TelemetryDelegate() {}
+  /** @endcond */
+};
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+MIP_NAMESPACE_END
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
-
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
-
-} // namespace consent
-} // namespace sample
+#endif // API_MIP_TELEMETRY_DELEGATE_H_

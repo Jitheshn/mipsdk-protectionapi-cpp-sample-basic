@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,54 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Defines UserRights class
+ * 
+ * @file user_rights.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_USER_RIGHTS_H_
+#define API_MIP_USER_RIGHTS_H_
 
-#include <iostream>
+#include <string>
+#include <vector>
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include "mip/mip_namespace.h"
 
-namespace sample {
-namespace consent {
+MIP_NAMESPACE_BEGIN
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+/**
+ * @brief A group of users and the rights associated with them
+ */
+class UserRights {
+public:
+  /**
+   * @brief UserRights constructor
+   * 
+   * @param users Group of users that share the same rights
+   * @param rights Rights shared by group of users
+   */
+  UserRights(const std::vector<std::string>& users, const std::vector<std::string>& rights) : mUsers(users), mRights(rights) {}
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /**
+   * @brief Gets users associated with a set of rights
+   * 
+   * @return Users associated with a set of rights
+   */
+  const std::vector<std::string>& Users() const { return mUsers; }
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /**
+   * @brief Gets rights associated with a group of users
+   * 
+   * @return Rights associated with a group of users
+   */
+  const std::vector<std::string>& Rights() const { return mRights; }
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+private:
+  std::vector<std::string> mUsers;
+  std::vector<std::string> mRights;
+};
 
-} // namespace consent
-} // namespace sample
+MIP_NAMESPACE_END
+
+#endif // API_MIP_USER_RIGHTS_H_

@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,41 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief A file export/import macros.
+ * 
+ * @file mip_export.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_MIP_EXPORT_H_
+#define API_MIP_MIP_EXPORT_H_
+/** @cond DOXYGEN_HIDE */
+#ifdef _WIN32
 
-#include <iostream>
+#define __CDECL __cdecl
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#ifndef MIP_API
+#ifdef MIP_IMPLEMENTATION
+#define MIP_API __declspec(dllexport)
+#elif defined(NO_MIP_IMPLEMENTATION)
+#define MIP_API
+#else // MIP_IMPLEMENTATION
+#define MIP_API __declspec(dllimport)
+#endif  // MIP_IMPLEMENTATION
+#endif // MIP_API
+#else  // _WIN32
 
-namespace sample {
-namespace consent {
+#define __CDECL
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+#ifndef MIP_API
+#ifdef MIP_IMPLEMENTATION
+#define MIP_API __attribute__((visibility("default")))
+#else // MIP_IMPLEMENTATION
+#define MIP_API
+#endif  // MIP_IMPLEMENTATION
+#endif // MIP_API
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+#endif // _WIN32
+/** @endcond */
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
-
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
-
-} // namespace consent
-} // namespace sample
+#endif  // API_MIP_MIP_EXPORT_H_

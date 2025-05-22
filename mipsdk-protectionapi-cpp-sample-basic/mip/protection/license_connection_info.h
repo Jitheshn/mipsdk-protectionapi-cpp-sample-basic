@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,45 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Defines LicenseConnectionInfo interface
+ * 
+ * @file license_connection_info.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_PROTECTION_LICENSE_CONNECTION_INFO_H_
+#define API_MIP_PROTECTION_LICENSE_CONNECTION_INFO_H_
 
-#include <iostream>
+#include <string>
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include "mip/mip_namespace.h"
 
-namespace sample {
-namespace consent {
+MIP_NAMESPACE_BEGIN
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+/**
+ * @brief The connection information from a license
+ */
+class LicenseConnectionInfo {
+public:
+  /**
+   * @brief Gets the extranet url
+   *
+   * @return The extranet url
+   */
+  virtual const std::string& GetExtranetUrl() const = 0;
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /**
+   * @brief Gets the intranet url
+   *
+   * @return The intranet url
+   */
+  virtual const std::string& GetIntranetUrl() const = 0;
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /** @cond DOXYGEN_HIDE */
+  virtual ~LicenseConnectionInfo() { }
+  /** @endcond */
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+};
 
-} // namespace consent
-} // namespace sample
+MIP_NAMESPACE_END
+#endif // API_MIP_PROTECTION_LICENSE_CONNECTION_INFO_H_

@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,62 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Contains HttpResponse interface used by HttpDelegate
+ * 
+ * @file http_response.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_HTTP_RESPONSE_H_
+#define API_MIP_HTTP_RESPONSE_H_
 
-#include <iostream>
+#include <vector>
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include "mip/common_types.h"
+#include "mip/mip_namespace.h"
 
-namespace sample {
-namespace consent {
+MIP_NAMESPACE_BEGIN
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+/**
+ * @brief Interface that describes a single HTTP response, implemented by client app when overriding HttpDelegate
+ */
+class HttpResponse {
+public:
+  /**
+   * @brief Gets response ID
+   * 
+   * @return Response ID
+   * 
+   * @note The corresponding HttpRequest will have had the same ID
+   */
+  virtual const std::string& GetId() const = 0;
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /**
+   * @brief Get response status code
+   *
+   * @return Status code
+   */
+  virtual int32_t GetStatusCode() const = 0;
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /**
+   * @brief Get request body
+   *
+   * @return Request body
+   */
+  virtual const std::vector<uint8_t>& GetBody() const = 0;
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+  /**
+   * @brief Get request headers
+   *
+   * @return Request headers
+   */
+  virtual const std::map<std::string, std::string, CaseInsensitiveComparator>& GetHeaders() const = 0;
 
-} // namespace consent
-} // namespace sample
+  /** @cond DOXYGEN_HIDE */
+  virtual ~HttpResponse() {}
+   /** @endcond */
+};
+
+MIP_NAMESPACE_END
+#endif  // API_MIP_HTTP_RESPONSE_H_
+

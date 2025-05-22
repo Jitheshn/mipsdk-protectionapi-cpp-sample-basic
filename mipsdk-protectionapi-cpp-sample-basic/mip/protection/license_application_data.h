@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,45 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Defines LicenseApplicationData interface
+ * 
+ * @file license_application_data.h
+ */
 
-#include "consent_delegate_impl.h"
+#ifndef API_MIP_PROTECTION_LICENSE_APPLICATION_DATA_H_
+#define API_MIP_PROTECTION_LICENSE_APPLICATION_DATA_H_
 
-#include <iostream>
+#include <string>
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+#include "mip/mip_namespace.h"
 
-namespace sample {
-namespace consent {
+MIP_NAMESPACE_BEGIN
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+/**
+ * @brief The application data from a license
+ */
+class LicenseApplicationData {
+public:
+  /**
+   * @brief Gets the application data name
+   *
+   * @return The name
+   */
+  virtual const std::string& GetName() const = 0;
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+  /**
+   * @brief Gets the application data value
+   *
+   * @return The value
+   */
+  virtual const std::string& GetValue() const = 0;
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+  /** @cond DOXYGEN_HIDE */
+  virtual ~LicenseApplicationData() { }
+  /** @endcond */
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
+};
 
-} // namespace consent
-} // namespace sample
+MIP_NAMESPACE_END
+#endif // API_MIP_PROTECTION_LICENSE_APPLICATION_DATA_H_

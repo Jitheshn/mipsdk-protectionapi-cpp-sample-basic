@@ -1,4 +1,4 @@
-﻿/**
+/*
  *
  * Copyright (c) Microsoft Corporation.
  * All rights reserved.
@@ -24,47 +24,55 @@
  * THE SOFTWARE.
  *
  */
+/**
+ * @brief Defines TemplateDescriptor interface
+ * 
+ * @file template_descriptor.h
+ */
+#ifndef API_MIP_PROTECTION_TEMPLATE_DESCRIPTOR_H_
+#define API_MIP_PROTECTION_TEMPLATE_DESCRIPTOR_H_
 
-#include "consent_delegate_impl.h"
+#include <string> 
 
-#include <iostream>
+#include "mip/mip_namespace.h"
 
-using mip::Consent;
-using std::runtime_error;
-using std::string;
+MIP_NAMESPACE_BEGIN
 
-namespace sample {
-namespace consent {
+class TemplateDescriptor {
+public:
+  /**
+   * @brief Get Template ID
+   *
+   * @return Template ID
+   */
+  virtual std::string GetId() const = 0;
+  /**
+   * @brief Get Template name
+   *
+   * @return Template name
+   */
+  virtual std::string GetName() const = 0;
+  /**
+   * @brief Get Template description
+   *
+   * @return Template description
+   */
+  virtual std::string GetDescription() const = 0;
 
-Consent ConsentDelegateImpl::GetUserConsent(const string& url) {
-  // Accept the consent to connect to the url
-  std::cout << "This is the consent delegate." << std::endl << std::endl;
+#ifdef MIP_OFFLINE_PUBLISHING_ENABLED
+  /**
+   * @brief Gets whether or not the owner is in the rights list with full access
+   *
+   * @return bool
+   */
+  virtual bool GetIsOwnerGrantedFullAccess() const = 0;
+#endif // MIP_OFFLINE_PUBLISHING_ENABLED
+  /** @cond DOXYGEN_HIDE */
+  virtual ~TemplateDescriptor() { }
+  /** @endcond */
 
-  std::cout << "SDK will connect to: " << url << std::endl;
+};
 
-  std::cout << "1) Accept Always" << std::endl;
-  std::cout << "2) Accept" << std::endl;
-  std::cout << "3) Reject" << std::endl;
-  std::cout << "Select an option: ";
-  char input;
-  // std::cin >> input;
-  input = 1;
+MIP_NAMESPACE_END
+#endif // API_MIP_PROTECTION_TEMPLATE_DESCRIPTOR_H_
 
-  switch (input)
-  {
-  case '1':
-	  return Consent::AcceptAlways;
-	  break;
-  case '2':
-	  return Consent::Accept;
-	  break;
-  case '3':
-	  return Consent::Reject;
-	  break;
-  default:
-	  return Consent::Accept;
-  }  
-}
-
-} // namespace consent
-} // namespace sample
